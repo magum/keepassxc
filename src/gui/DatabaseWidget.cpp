@@ -672,7 +672,13 @@ void DatabaseWidget::setClipboardTextAndMinimize(const QString& text)
     clipboard()->setText(text);
     if (config()->get("HideWindowOnCopy").toBool()) {
         if (config()->get("MinimizeOnCopy").toBool()) {
+#ifdef Q_OS_LINUX
+            window()->setWindowState(window()->windowState()|Qt::WindowMinimized);
+            QApplication::processEvents();
+            window()->setWindowState(window()->windowState()&~Qt::WindowMinimized);
+#else
             window()->showMinimized();
+#endif
         } else if (config()->get("DropToBackgroundOnCopy").toBool()) {
             window()->lower();
         }
